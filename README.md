@@ -1,4 +1,4 @@
-# RxTiny 微型rx，以下是使用方法
+# RxTiny 微型oc响应式框架，以下是使用方法
 ```
 [self addMenu:@"观察订阅" callback:^(id sender, id data) {
     @strongify(self);
