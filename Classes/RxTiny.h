@@ -1,0 +1,88 @@
+//
+//  RxTiny.h
+//  JsonView
+//
+//  Created by zct on 2019/7/25.
+//  Copyright © 2019年 migu. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "RxtExtentions.h"
+
+typedef void (^RxtNextB)(id v);
+typedef id (^RxtMapB)(id v);
+typedef BOOL (^RxtFilterB)(id v);
+
+#pragma mark - 信号
+@interface RxtSignal: NSObject
+@property (nonatomic, readonly) void (^push)(id newValue);
+@property (nonatomic, readonly) RxtSignal *(^bind)(RxtSignal *node);
+@property (nonatomic, readonly) RxtSignal *(^dieAt)(RxtSignal *node);
+@property (nonatomic, readonly) RxtSignal *(^die)(void);
+@property (nonatomic, readonly) RxtSignal *(^next)(RxtNextB);
+@property (nonatomic, readonly) RxtSignal *(^filter)(RxtFilterB);
+@property (nonatomic, readonly) RxtSignal *(^map)(RxtMapB);
+
+- (id)outputValue;
+- (void)unBind:(RxtSignal *)node;
+@end
+
+#pragma mark - 值观察者，一般不直接使用，请使用宏
+@interface RxtPropertyObserver: RxtSignal
++ (instancetype)object:(id)ref property:(NSString *)property;
+@end
+#pragma mark - 订阅，一般不直接使用，请使用宏
+@interface RxtProprtySubscriber: RxtSignal
+@property (nonatomic) RxtSignal *bindSingalDontUse; //宏辅助属性，不要直接使用
++ (instancetype)object:(id)ref property:(NSString *)property;
+@end
+
+#pragma mark - 合并
+RxtSignal* RxtMerge(NSArray *nodes);
+
+#pragma mark - 快捷宏
+
+#define rxo(ref, propertyName) [RxtPropertyObserver object:ref property:((NO&&ref.propertyName)?nil:@#propertyName)]
+#define rxp(ref, propertyName) [RxtProprtySubscriber object:ref property:((NO&&ref.propertyName)?nil:@#propertyName)]
+#define rxsp(ref, propertyName) [RxtProprtySubscriber object:ref property:((NO&&ref.propertyName)?nil:@#propertyName)].bindSingalDontUse
+#define rxmerge(...) RxtMerge(@[__VA_ARGS__])
+
+
+#pragma mark - 补充转换器
+
+typedef void (^RxtToBoolB)(BOOL v);
+typedef void (^RxtToStringB)(NSString *v);
+typedef void (^RxtToDoubleB)(double v);
+typedef void (^RxtToFloatB)(float v);
+typedef void (^RxtToCharB)(char v);
+typedef void (^RxtToUIntegerB)(NSUInteger v);
+typedef void (^RxtToIntegerB)(NSInteger v);
+typedef void (^RxtToIntB)(int v);
+typedef void (^RxtToLongB)(long v);
+typedef void (^RxtToLongLongB)(long long v);
+typedef void (^RxtToUnsignedIntB)(unsigned int v);
+typedef void (^RxtToUnsignedLongB)(unsigned long v);
+typedef void (^RxtToUnsignedLongLongB)(unsigned long long v);
+typedef void (^RxtToColorB)(UIColor *color);
+
+@interface RxtSignal (covert)
+@property (nonatomic, readonly) RxtSignal *(^toString)(RxtToStringB);
+@property (nonatomic, readonly) void (^toBool)(RxtToBoolB);
+@property (nonatomic, readonly) void (^toFloat)(RxtToFloatB);
+@property (nonatomic, readonly) void (^toDouble)(RxtToDoubleB);
+@property (nonatomic, readonly) void (^toChar)(RxtToCharB);
+@property (nonatomic, readonly) void (^toInteger)(RxtToIntegerB);
+@property (nonatomic, readonly) void (^toUInteger)(RxtToUIntegerB);
+@property (nonatomic, readonly) void (^toInt)(RxtToIntB);
+@property (nonatomic, readonly) void (^toLong)(RxtToLongB);
+@property (nonatomic, readonly) void (^toLongLong)(RxtToLongLongB);
+@property (nonatomic, readonly) void (^toUnsignedInt)(RxtToUnsignedIntB);
+@property (nonatomic, readonly) void (^toUnsignedLong)(RxtToUnsignedLongB);
+@property (nonatomic, readonly) void (^toUnsignedLongLong)(RxtToUnsignedLongLongB);
+
+@property (nonatomic, readonly) RxtSignal *(^revertBool)(void);
+@property (nonatomic, readonly) RxtSignal *(^notNull)(void);
+@property (nonatomic, readonly) RxtSignal *(^toColor)(RxtToColorB);
+
+@property (nonatomic, readonly) void (^log)(NSString *format);
+@end
