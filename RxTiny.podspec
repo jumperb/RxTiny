@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "RxTiny"
-  s.version      = "0.0.1"
+  s.version      = "0.0.2"
   s.summary      = "A short description of RxTiny."
 
   s.description  = <<-DESC
@@ -23,6 +23,6 @@ Pod::Spec.new do |s|
   s.requires_arc = true
   
   s.ios.deployment_target = '8.0'
-
+  s.dependency 'Hodor'
   s.ios.source_files = 'Classes/*'  
 end
