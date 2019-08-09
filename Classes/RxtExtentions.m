@@ -11,6 +11,27 @@
 #import <objc/runtime.h>
 #import <Hodor/NSObject+ext.h>
 
+@interface RxtDeallocMonitor : NSObject
+@property (nonatomic) RxtSignal *deallocSignal;
+@end
+
+@implementation RxtDeallocMonitor
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _deallocSignal = [RxtSignal new];
+    }
+    return self;
+}
+- (void)dealloc
+{
+    _deallocSignal.push(nil);
+}
+
+@end
+
+
 @implementation NSObject (Rxt)
 @dynamic rxtObservers;
 static const void *rxtObserversAddr = &rxtObserversAddr;
@@ -32,6 +53,22 @@ static const void *rxtObserversAddr = &rxtObserversAddr;
     return ^RxtSignal* (NSString *pp) {
         return [RxtPropertyObserver object:self property:pp];
     };
+}
+
+@dynamic rxtDeallocMonitor;
+static const void *rxtDeallocMonitorAddr = &rxtDeallocMonitorAddr;
+- (NSObject *)rxtDeallocMonitor {
+    return objc_getAssociatedObject(self, rxtDeallocMonitorAddr);
+}
+- (void)setRxtDeallocMonitor:(NSObject *)rxtDeallocMonitor {
+    objc_setAssociatedObject(self, rxtDeallocMonitorAddr, rxtDeallocMonitor, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (RxtSignal *)rxtDeallocSignal {
+    if (!self.rxtDeallocMonitor) {
+        self.rxtDeallocMonitor = [RxtDeallocMonitor new];
+    }
+    return ((RxtDeallocMonitor *)self.rxtDeallocMonitor).deallocSignal;
 }
 @end
 

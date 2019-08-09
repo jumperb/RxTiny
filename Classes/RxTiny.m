@@ -13,7 +13,7 @@
 @interface RxtSignal ()
 @property (nonatomic) id value;
 @property (nonatomic) BOOL deaded;
-@property (nonatomic) NSMutableSet<RxtSignal*> *subNodes;
+@property (nonatomic) NSMutableSet<RxtSignal*> *subSignals;
 @end
 
 @interface RxtNext: RxtSignal
@@ -33,9 +33,9 @@
 
 @implementation RxtSignal
 
-- (NSMutableSet<RxtSignal*> *)subNodes {
-    if (!_subNodes) _subNodes = [NSMutableSet new];
-    return _subNodes;
+- (NSMutableSet<RxtSignal*> *)subSignals {
+    if (!_subSignals) _subSignals = [NSMutableSet new];
+    return _subSignals;
 }
 
 - (void)push:(id)newValue {
@@ -47,24 +47,24 @@
 }
 - (void)dispatch:(id)value {
     id v = [self outputValue];
-    for (RxtSignal *node in self.subNodes) {
-        [self dispatchOne:node value:v];
+    for (RxtSignal *signal in self.subSignals) {
+        [self dispatchOne:signal value:v];
     }
 }
-- (void)dispatchOne:(RxtSignal *)node value:(id)value {
+- (void)dispatchOne:(RxtSignal *)signal value:(id)value {
     if (self.deaded) return;
-    [node push:value];
+    [signal push:value];
 }
-- (RxtSignal *)addNext:(RxtSignal *)node {
-    return [self addNext:node setupTriger:YES];
+- (RxtSignal *)addNext:(RxtSignal *)signal {
+    return [self addNext:signal setupTriger:YES];
 }
-- (RxtSignal *)addNext:(RxtSignal *)node setupTriger:(BOOL)setupTriger{
-    [self.subNodes addObject:node];
-    if (setupTriger) [self dispatchOne:node value:[self outputValue]];
-    return node;
+- (RxtSignal *)addNext:(RxtSignal *)signal setupTriger:(BOOL)setupTriger{
+    [self.subSignals addObject:signal];
+    if (setupTriger) [self dispatchOne:signal value:[self outputValue]];
+    return signal;
 }
-- (void)unBind:(RxtSignal *)node {
-    [self.subNodes removeObject:node];
+- (void)unBind:(RxtSignal *)signal {
+    [self.subSignals removeObject:signal];
 }
 - (void (^)(id))push {
     return ^void (id newValue) {
@@ -84,6 +84,17 @@
             [weakSelf dispose];
         }];
         [n addNext:o setupTriger:NO];
+        return self;
+    };
+}
+- (RxtSignal *(^)(NSObject *obj))dieWith {
+    return ^RxtSignal* (NSObject *obj) {
+        RxtNext *o = [RxtNext new];
+        __weak typeof(self) weakSelf = self;
+        [o setNextb:^(id v) {
+            [weakSelf dispose];
+        }];
+        [obj.rxtDeallocSignal addNext:o setupTriger:NO];
         return self;
     };
 }
@@ -128,17 +139,17 @@
 @end
 
 @implementation RxtFilter
-- (void)dispatchOne:(RxtSignal *)node value:(id)value {
+- (void)dispatchOne:(RxtSignal *)signal value:(id)value {
     if (!self.filterb) return;
     if (!self.filterb(value)) return;
-    [super dispatchOne:node value:value];
+    [super dispatchOne:signal value:value];
 }
 @end
 
 @implementation RxtNotNull
-- (void)dispatchOne:(RxtSignal *)node value:(id)value {
+- (void)dispatchOne:(RxtSignal *)signal value:(id)value {
     if (!value) return;
-    [super dispatchOne:node value:value];
+    [super dispatchOne:signal value:value];
 }
 @end
 
@@ -218,11 +229,11 @@
 }
 @end
 #pragma mark - 合并
-RxtSignal* RxtMerge(NSArray *nodes) {
+RxtSignal* RxtMerge(NSArray *signals) {
     
     RxtSignal *me = [RxtSignal new];
-    for  (RxtSignal *node in nodes) {
-        [node addNext:me];
+    for  (RxtSignal *signal in signals) {
+        [signal addNext:me];
     }
     return me;
 }

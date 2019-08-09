@@ -95,6 +95,20 @@
             s2.push(@"any");
             self.str = @"3";
         }];
+        
+        [self addMenu:@"一起死" callback:^(id sender, id data) {
+            @strongify(self);
+            self.str = @"1";
+            RxtSignal *s = rxo(self, str);
+            s.log(@"%@");
+            self.str = @"2";
+            if (YES) {
+                NSObject *a = [NSObject new];
+                s.dieWith(a);
+            }            
+            self.str = @"3";
+        }];
+        
         [self addMenu:@"信号绑定" callback:^(id sender, id data) {
             @strongify(self);
             self.str = @"1";

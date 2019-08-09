@@ -15,16 +15,26 @@ typedef BOOL (^RxtFilterB)(id v);
 
 #pragma mark - 信号
 @interface RxtSignal: NSObject
+//给信号输入值
 @property (nonatomic, readonly) void (^push)(id newValue);
-@property (nonatomic, readonly) RxtSignal *(^bind)(RxtSignal *node);
-@property (nonatomic, readonly) RxtSignal *(^dieAt)(RxtSignal *node);
+//绑定信号，追加信号
+@property (nonatomic, readonly) RxtSignal *(^bind)(RxtSignal *s);
+//如果收到信号s，则让自己死掉
+@property (nonatomic, readonly) RxtSignal *(^dieAt)(RxtSignal *s);
+//跟obj一起死
+@property (nonatomic, readonly) RxtSignal *(^dieWith)(NSObject *obj);
+//杀死信号
 @property (nonatomic, readonly) RxtSignal *(^die)(void);
+//下一步操作
 @property (nonatomic, readonly) RxtSignal *(^next)(RxtNextB);
+//过滤器
 @property (nonatomic, readonly) RxtSignal *(^filter)(RxtFilterB);
+//映射信号数据
 @property (nonatomic, readonly) RxtSignal *(^map)(RxtMapB);
-
+//直接输出值
 - (id)outputValue;
-- (void)unBind:(RxtSignal *)node;
+//解除绑定，s是指下级信号
+- (void)unBind:(RxtSignal *)s;
 @end
 
 #pragma mark - 值观察者，一般不直接使用，请使用宏
