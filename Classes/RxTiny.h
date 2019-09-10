@@ -52,9 +52,9 @@ RxtSignal* RxtMerge(NSArray *nodes);
 
 #pragma mark - 快捷宏
 
-#define rxo(ref, propertyName) [RxtPropertyObserver object:ref property:((NO&&ref.propertyName)?nil:@#propertyName)]
-#define rxp(ref, propertyName) [RxtProprtySubscriber object:ref property:((NO&&ref.propertyName)?nil:@#propertyName)]
-#define rxsp(ref, propertyName) [RxtProprtySubscriber object:ref property:((NO&&ref.propertyName)?nil:@#propertyName)].bindSingalDontUse
+#define rxo(ref, propertyName) [RxtPropertyObserver object:ref property:((NO&&((void)ref.propertyName, NO))?nil:@#propertyName)]
+#define rxp(ref, propertyName) [RxtProprtySubscriber object:ref property:((NO&&((void)ref.propertyName, NO))?nil:@#propertyName)]
+#define rxsp(ref, propertyName) [RxtProprtySubscriber object:ref property:((NO&&((void)ref.propertyName, NO))?nil:@#propertyName)].bindSingalDontUse
 #define rxmerge(...) RxtMerge(@[__VA_ARGS__])
 
 

@@ -18,6 +18,7 @@
 @property (nonatomic) NSString *str2;
 @property (nonatomic) BOOL b1;
 @property (nonatomic) UIColor *color;
+@property (nonatomic) CGPoint point;
 @end
 
 @implementation ViewController
@@ -157,7 +158,12 @@
             self.color = [UIColor random];
             NSLog(@"见-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath");
         }];
-        
+        [self addMenu:@"监听结构体" callback:^(id sender, id data) {
+            @strongify(self);
+            self.point = CGPointMake(10, 10);
+            rxo(self, point).log(@"%@");
+            self.point = CGPointMake(20, 20);
+        }];
     }
     return self;
 }
