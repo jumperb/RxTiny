@@ -74,7 +74,7 @@
 - (RxtSignal *(^)(RxtSignal *))bind {
     return ^RxtSignal* (RxtSignal *n) {
         [self addNext:n];
-        return self;
+        return n;
     };
 }
 - (RxtSignal *(^)(RxtSignal *))dieAt {
@@ -113,7 +113,7 @@
         RxtNext *o = [RxtNext new];
         o.nextb = nb;
         [self addNext:o];
-        return self;
+        return o;
     };
 }
 
@@ -122,7 +122,7 @@
         RxtFilter *o = [RxtFilter new];
         o.filterb = b;
         [self addNext:o];
-        return self;
+        return o;
     };
 }
 - (RxtSignal *(^)(RxtMapB))map {
@@ -130,7 +130,7 @@
         RxtMap *o = [RxtMap new];
         o.mapb = b;
         [self addNext:o];
-        return self;
+        return o;
     };
 }
 
