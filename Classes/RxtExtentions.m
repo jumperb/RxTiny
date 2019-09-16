@@ -46,7 +46,8 @@ static const void *rxtObserversAddr = &rxtObserversAddr;
     if (signal) signal.push(nil);
     NSMutableSet *observers = [self _rxtObservers];
     if (observers) {
-        for (RxtPropertyObserver *ob in observers) {
+        NSSet *set = [observers copy];
+        for (RxtPropertyObserver *ob in set) {
             [ob removeObserver:self];
         }
     }
