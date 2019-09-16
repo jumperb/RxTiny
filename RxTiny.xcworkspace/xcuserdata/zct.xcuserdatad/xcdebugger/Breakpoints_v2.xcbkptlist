@@ -10,45 +10,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Classes/RxTiny.m"
-            timestampString = "589864218.003818"
+            timestampString = "590312814.670378"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "361"
-            endingLineNumber = "361"
+            startingLineNumber = "364"
+            endingLineNumber = "364"
             landmarkName = "@implementation RxtSignal(convert)"
             landmarkType = "3">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__40-[RxtSignal(convert) toUnsignedLongLong]_block_invoke"
-                  moduleName = "RxTiny"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/zct/Documents/pods/RxTiny/Classes/RxTiny.m"
-                  timestampString = "585830424.534438"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "341"
-                  endingLineNumber = "341"
-                  offsetFromSymbolStart = "54">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__40-[RxtSignal(convert) toUnsignedLongLong]_block_invoke_2"
-                  moduleName = "RxTiny"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/zct/Documents/pods/RxTiny/Classes/RxTiny.m"
-                  timestampString = "585830424.537834"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "341"
-                  endingLineNumber = "341"
-                  offsetFromSymbolStart = "12">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -58,12 +26,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Classes/RxTiny.m"
-            timestampString = "589864218.004449"
+            timestampString = "590312814.6704969"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "115"
-            endingLineNumber = "115"
-            landmarkName = "-next"
+            startingLineNumber = "104"
+            endingLineNumber = "104"
+            landmarkName = "-die"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -74,28 +42,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Classes/RxtExtentions.m"
-            timestampString = "587034123.208233"
+            timestampString = "590312814.67058"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "94"
-            endingLineNumber = "94"
-            landmarkName = "-rxt_prepareForReuse"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Classes/RxtExtentions.m"
-            timestampString = "587034123.208285"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "91"
-            endingLineNumber = "91"
-            landmarkName = "-rxt_prepareForReuse"
+            startingLineNumber = "50"
+            endingLineNumber = "50"
+            landmarkName = "-rxt_dealloc"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

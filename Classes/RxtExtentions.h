@@ -14,9 +14,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NSObject (Rxt)
-@property (nonatomic, strong) NSMutableSet<RxtPropertyObserver *> *rxtObservers;
+@property (nonatomic, readonly) NSMutableSet<RxtPropertyObserver *> *rxtObservers;
 @property (nonatomic, readonly) RxtSignal *(^rxtObserve)(NSString *pp);
-@property (nonatomic, strong) NSObject *rxtDeallocMonitor;
 @property (nonatomic, readonly) RxtSignal *rxtDeallocSignal;
 @end
 

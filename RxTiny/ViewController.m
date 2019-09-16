@@ -164,6 +164,12 @@
             rxo(self, point).log(@"%@");
             self.point = CGPointMake(20, 20);
         }];
+        
+        [self addMenu:@"观察者自动释放" callback:^(id sender, id data) {
+            UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+            rxo(view, frame).log(@"%@");
+            view.frame = CGRectMake(2, 2, 5, 5);
+        }];
     }
     return self;
 }

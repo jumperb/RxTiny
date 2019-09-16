@@ -11,32 +11,19 @@
 #import <objc/runtime.h>
 #import <Hodor/NSObject+ext.h>
 
-@interface RxtDeallocMonitor : NSObject
-@property (nonatomic) RxtSignal *deallocSignal;
-@end
-
-@implementation RxtDeallocMonitor
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        _deallocSignal = [RxtSignal new];
-    }
-    return self;
-}
-- (void)dealloc
-{
-    _deallocSignal.push(nil);
-}
-
-@end
-
 
 @implementation NSObject (Rxt)
-@dynamic rxtObservers;
 static const void *rxtObserversAddr = &rxtObserversAddr;
++ (void)rxt_setup {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        SEL deallocSel = NSSelectorFromString(@"dealloc");
+        [NSObject methodSwizzleWithClass:self origSEL:deallocSel overrideSEL:@selector(rxt_dealloc)];
+    });
+}
 - (NSMutableSet<RxtPropertyObserver *> *)rxtObservers
 {
+    [NSObject rxt_setup];
     id res = objc_getAssociatedObject(self, rxtObserversAddr);
     if (!res)
     {
@@ -45,30 +32,39 @@ static const void *rxtObserversAddr = &rxtObserversAddr;
     }
     return res;
 }
-- (void)setRxtObservers:(NSMutableSet<RxtPropertyObserver *> *)rxtObservers
+- (NSMutableSet<RxtPropertyObserver *> *)_rxtObservers
 {
-    objc_setAssociatedObject(self, rxtObserversAddr, rxtObservers, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    return objc_getAssociatedObject(self, rxtObserversAddr);
 }
 - (RxtSignal *(^)(NSString *pp))rxtObserve {
     return ^RxtSignal* (NSString *pp) {
         return [RxtPropertyObserver object:self property:pp];
     };
 }
-
-@dynamic rxtDeallocMonitor;
-static const void *rxtDeallocMonitorAddr = &rxtDeallocMonitorAddr;
-- (NSObject *)rxtDeallocMonitor {
-    return objc_getAssociatedObject(self, rxtDeallocMonitorAddr);
-}
-- (void)setRxtDeallocMonitor:(NSObject *)rxtDeallocMonitor {
-    objc_setAssociatedObject(self, rxtDeallocMonitorAddr, rxtDeallocMonitor, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (RxtSignal *)rxtDeallocSignal {
-    if (!self.rxtDeallocMonitor) {
-        self.rxtDeallocMonitor = [RxtDeallocMonitor new];
+- (void)rxt_dealloc {
+    RxtSignal *signal = [self _rxtDeallocSignal];
+    if (signal) signal.push(nil);
+    NSMutableSet *observers = [self _rxtObservers];
+    if (observers) {
+        for (RxtPropertyObserver *ob in observers) {
+            [ob removeObserver:self];
+        }
     }
-    return ((RxtDeallocMonitor *)self.rxtDeallocMonitor).deallocSignal;
+    [self rxt_dealloc];
+}
+
+static const void *rxtDeallocSignalAddr = &rxtDeallocSignalAddr;
+- (RxtSignal *)rxtDeallocSignal {
+    [NSObject rxt_setup];
+    RxtSignal *o = objc_getAssociatedObject(self, rxtDeallocSignalAddr);
+    if (!o) {
+        o = [RxtSignal new];
+        objc_setAssociatedObject(self, rxtDeallocSignalAddr, o, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    return o;
+}
+- (RxtSignal *)_rxtDeallocSignal {
+    return objc_getAssociatedObject(self, rxtDeallocSignalAddr);
 }
 @end
 
