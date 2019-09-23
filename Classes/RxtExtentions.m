@@ -48,7 +48,7 @@ static const void *rxtObserversAddr = &rxtObserversAddr;
     if (observers) {
         NSSet *set = [observers copy];
         for (RxtPropertyObserver *ob in set) {
-            [ob removeObserver:self];
+            [ob removeObserver];
         }
     }
     [self rxt_dealloc];

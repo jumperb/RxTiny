@@ -166,7 +166,7 @@
 
 #pragma mark - 值观察者
 @interface RxtPropertyObserver ()
-@property (nonatomic, weak) id ref;
+@property (nonatomic, assign) id ref;
 @property (nonatomic) NSString *propertyName;
 @property (nonatomic) BOOL observing;
 @end
@@ -193,14 +193,11 @@
     if ([value isKindOfClass:[NSNull class]]) value = nil;
     [self push:value];
 }
-- (void)removeObserver{
-    [self removeObserver:self.ref]; //dealloc中self.ref提前释放
-}
-- (void)removeObserver:(id)ref {
+- (void)removeObserver {
     if (self.observing) {
         self.observing = NO;
-        [ref removeObserver:self forKeyPath:self.propertyName];
-        [((NSObject *)ref).rxtObservers removeObject:self];
+        [self.ref removeObserver:self forKeyPath:self.propertyName];
+        [((NSObject *)self.ref).rxtObservers removeObject:self];
     }
 }
 - (void)dealloc

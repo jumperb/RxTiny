@@ -40,7 +40,7 @@ typedef BOOL (^RxtFilterB)(id v);
 #pragma mark - 值观察者，一般不直接使用，请使用宏
 @interface RxtPropertyObserver: RxtSignal
 + (instancetype)object:(id)ref property:(NSString *)property;
-- (void)removeObserver:(id)ref;
+- (void)removeObserver;
 @end
 #pragma mark - 订阅，一般不直接使用，请使用宏
 @interface RxtProprtySubscriber: RxtSignal

@@ -10,28 +10,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Classes/RxTiny.m"
-            timestampString = "590312814.670378"
+            timestampString = "590916523.24535"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "364"
-            endingLineNumber = "364"
-            landmarkName = "@implementation RxtSignal(convert)"
-            landmarkType = "3">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Classes/RxTiny.m"
-            timestampString = "590312814.6704969"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "104"
-            endingLineNumber = "104"
-            landmarkName = "-die"
+            startingLineNumber = "361"
+            endingLineNumber = "361"
+            landmarkName = "-notNull"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -41,13 +25,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Classes/RxtExtentions.m"
-            timestampString = "590312814.67058"
+            filePath = "Classes/RxTiny.m"
+            timestampString = "590916523.245509"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "50"
-            endingLineNumber = "50"
-            landmarkName = "-rxt_dealloc"
+            startingLineNumber = "104"
+            endingLineNumber = "104"
+            landmarkName = "-die"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
