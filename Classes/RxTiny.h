@@ -35,13 +35,20 @@ typedef BOOL (^RxtFilterB)(id v);
 - (id)outputValue;
 //解除绑定，s是指下级信号
 - (void)unBind:(RxtSignal *)s;
+//失效
+- (void)dispose;
 @end
 
 #pragma mark - 值观察者，一般不直接使用，请使用宏
 @interface RxtPropertyObserver: RxtSignal
 + (instancetype)object:(id)ref property:(NSString *)property;
-- (void)removeObserver;
 @end
+
+#pragma mark - 通知观察者，一般不直接使用，请使用宏
+@interface RxtNotificationObserver: RxtSignal
++ (instancetype)object:(id)ref notification:(NSString *)notification object:(id)object;
+@end
+
 #pragma mark - 订阅，一般不直接使用，请使用宏
 @interface RxtProprtySubscriber: RxtSignal
 @property (nonatomic) RxtSignal *bindSingalDontUse; //宏辅助属性，不要直接使用

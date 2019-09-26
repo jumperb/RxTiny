@@ -170,6 +170,14 @@
             rxo(view, frame).log(@"%@");
             view.frame = CGRectMake(2, 2, 5, 5);
         }];
+        
+        [self addMenu:@"通知" callback:^(id sender, id data) {
+            @strongify(self)
+            self.rxtObserveNoti(@"noti1234").next(^(NSNotification *v) {
+                NSLog(@"%@", v.userInfo);
+            });
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"noti1234" object:nil userInfo:@{@"k":@"v"}];
+        }];
     }
     return self;
 }

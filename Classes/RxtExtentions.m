@@ -13,6 +13,7 @@
 
 
 @implementation NSObject (Rxt)
+
 static const void *rxtObserversAddr = &rxtObserversAddr;
 + (void)rxt_setup {
     static dispatch_once_t onceToken;
@@ -32,7 +33,7 @@ static const void *rxtObserversAddr = &rxtObserversAddr;
     }
     return res;
 }
-- (NSMutableSet<RxtPropertyObserver *> *)_rxtObservers
+- (NSMutableSet<RxtSignal *> *)_rxtObservers
 {
     return objc_getAssociatedObject(self, rxtObserversAddr);
 }
@@ -41,14 +42,26 @@ static const void *rxtObserversAddr = &rxtObserversAddr;
         return [RxtPropertyObserver object:self property:pp];
     };
 }
+- (RxtSignal * (^)(NSString *noti))rxtNotiObserve {
+    return ^RxtSignal* (NSString *noti) {
+        return [RxtNotificationObserver object:self notification:noti object:nil];
+    };
+}
+
+- (RxtSignal * (^)(NSString *noti, id obj))rxtNotiObserve2 {
+    return ^RxtSignal* (NSString *noti, id obj) {
+        return [RxtNotificationObserver object:self notification:noti object:obj];
+    };
+}
+
 - (void)rxt_dealloc {
     RxtSignal *signal = [self _rxtDeallocSignal];
     if (signal) signal.push(nil);
     NSMutableSet *observers = [self _rxtObservers];
     if (observers) {
         NSSet *set = [observers copy];
-        for (RxtPropertyObserver *ob in set) {
-            [ob removeObserver];
+        for (RxtSignal *ob in set) {
+            [ob dispose];
         }
     }
     [self rxt_dealloc];
@@ -66,6 +79,13 @@ static const void *rxtDeallocSignalAddr = &rxtDeallocSignalAddr;
 }
 - (RxtSignal *)_rxtDeallocSignal {
     return objc_getAssociatedObject(self, rxtDeallocSignalAddr);
+}
+
+- (void)rxt_observeNotification:(NSString *)name object:(id)obj {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(rxt_getNotification:) name:name object:obj];
+}
+- (void)rxt_getNotification:(NSNotification *)noti {
+    
 }
 @end
 

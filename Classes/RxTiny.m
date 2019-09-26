@@ -13,6 +13,7 @@
 @interface RxtSignal ()
 @property (nonatomic) id value;
 @property (nonatomic) BOOL deaded;
+@property (nonatomic) BOOL lazy; //是否连接上就触发一次
 @property (nonatomic) NSMutableSet<RxtSignal*> *subSignals;
 @end
 
@@ -56,11 +57,10 @@
     [signal push:value];
 }
 - (RxtSignal *)addNext:(RxtSignal *)signal {
-    return [self addNext:signal setupTriger:YES];
-}
-- (RxtSignal *)addNext:(RxtSignal *)signal setupTriger:(BOOL)setupTriger{
     [self.subSignals addObject:signal];
-    if (setupTriger) [self dispatchOne:signal value:[self outputValue]];
+    if (!self.lazy && !signal.lazy) {
+        [self dispatchOne:signal value:[self outputValue]];
+    }
     return signal;
 }
 - (void)unBind:(RxtSignal *)signal {
@@ -80,22 +80,24 @@
 - (RxtSignal *(^)(RxtSignal *))dieAt {
     return ^RxtSignal* (RxtSignal *n) {
         RxtNext *o = [RxtNext new];
+        o.lazy = YES;
         __weak typeof(self) weakSelf = self;
         [o setNextb:^(id v) {
             [weakSelf dispose];
         }];
-        [n addNext:o setupTriger:NO];
+        [n addNext:o];
         return self;
     };
 }
 - (RxtSignal *(^)(NSObject *obj))dieWith {
     return ^RxtSignal* (NSObject *obj) {
         RxtNext *o = [RxtNext new];
+        o.lazy = YES;
         __weak typeof(self) weakSelf = self;
         [o setNextb:^(id v) {
             [weakSelf dispose];
         }];
-        [obj.rxtDeallocSignal addNext:o setupTriger:NO];
+        [obj.rxtDeallocSignal addNext:o];
         return self;
     };
 }
@@ -193,7 +195,7 @@
     if ([value isKindOfClass:[NSNull class]]) value = nil;
     [self push:value];
 }
-- (void)removeObserver {
+- (void)unObserve {
     if (self.observing) {
         self.observing = NO;
         [self.ref removeObserver:self forKeyPath:self.propertyName];
@@ -202,11 +204,63 @@
 }
 - (void)dealloc
 {
-    [self removeObserver];
+    [self unObserve];
 }
 - (void)dispose {
     [super dispose];
-    [self removeObserver];
+    [self unObserve];
+}
+@end
+
+#pragma mark - 通知观察者
+@interface RxtNotificationObserver ()
+@property (nonatomic, assign) id ref;
+@property (nonatomic) NSString *notification;
+@property (nonatomic) id obj;
+@property (nonatomic) BOOL observing;
+@end
+
+@implementation RxtNotificationObserver
++ (instancetype)object:(id)ref notification:(NSString *)notification object:(id)object {
+    RxtNotificationObserver *res = [RxtNotificationObserver new];
+    res.notification = notification;
+    res.ref = ref;
+    res.obj = object;
+    [res setup];
+    return res;
+}
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.lazy = YES;
+    }
+    return self;
+}
+- (void)setup {
+    if (!self.observing) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNotification:) name:self.notification object:self.obj];
+        [((NSObject *)self.ref).rxtObservers addObject:self];
+        self.observing = YES;
+    }
+}
+- (void)handleNotification:(NSNotification *)noti {
+    [self push:noti];
+}
+- (void)unObserve {
+    if (self.observing) {
+        self.observing = NO;
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+        [((NSObject *)self.ref).rxtObservers removeObject:self];
+    }
+}
+- (void)dealloc
+{
+    [self unObserve];
+}
+- (void)dispose {
+    [super dispose];
+    [self unObserve];
 }
 @end
 

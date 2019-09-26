@@ -9,13 +9,13 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 @class RxtSignal;
-@class RxtPropertyObserver;
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NSObject (Rxt)
-@property (nonatomic, readonly) NSMutableSet<RxtPropertyObserver *> *rxtObservers;
-@property (nonatomic, readonly) RxtSignal *(^rxtObserve)(NSString *pp);
+@property (nonatomic, readonly) NSMutableSet<RxtSignal *> *rxtObservers;
+@property (nonatomic, readonly) RxtSignal *(^rxtNotiObserve)(NSString *notification);
+@property (nonatomic, readonly) RxtSignal *(^rxtNotiObserve2)(NSString *notification, id obj);
 @property (nonatomic, readonly) RxtSignal *rxtDeallocSignal;
 @end
 
