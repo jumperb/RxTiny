@@ -172,11 +172,14 @@
         }];
         
         [self addMenu:@"通知" callback:^(id sender, id data) {
-            @strongify(self)
-            self.rxtObserveNoti(@"noti1234").next(^(NSNotification *v) {
-                NSLog(@"%@", v.userInfo);
-            });
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"noti1234" object:nil userInfo:@{@"k":@"v"}];
+            if (1) {
+                NSObject *o = [NSObject new];
+                o.rxtNotiObserve(@"noti1234").next(^(NSNotification *v) {
+                    NSLog(@"%@", v.userInfo);
+                });
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"noti1234" object:nil userInfo:@{@"k":@"v"}];
+            }
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"noti1234" object:nil userInfo:@{@"k":@"v2"}];
         }];
     }
     return self;
