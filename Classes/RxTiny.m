@@ -3,7 +3,7 @@
 //  JsonView
 //
 //  Created by zct on 2019/7/25.
-//  Copyright © 2019年 migu. All rights reserved.
+//  Copyright © 2019年 zct. All rights reserved.
 //
 
 #import "RxTiny.h"

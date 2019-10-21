@@ -3,7 +3,7 @@
 //  RxTiny
 //
 //  Created by zct on 2019/7/25.
-//  Copyright © 2019 migu. All rights reserved.
+//  Copyright © 2019 zct. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
