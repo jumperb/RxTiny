@@ -155,7 +155,7 @@
         
         [self addMenu:@"UI重用信号" callback:^(id sender, NSIndexPath *indexPath) {
             @strongify(self);
-            self.color = [UIColor random];
+            self.color = [UIColor h_random];
             NSLog(@"见-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath");
         }];
         [self addMenu:@"监听结构体" callback:^(id sender, id data) {

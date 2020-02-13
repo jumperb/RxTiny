@@ -168,8 +168,8 @@
 
 #pragma mark - 值观察者
 @interface RxtPropertyObserver ()
-@property (nonatomic, assign) id ref;
-@property (nonatomic) NSString *propertyName;
+@property (nonatomic, assign, readwrite) id ref;
+@property (nonatomic, readwrite) NSString *propertyName;
 @property (nonatomic) BOOL observing;
 @end
 
@@ -437,10 +437,10 @@ RxtSignal* RxtMerge(NSArray *signals) {
         return self.map(^id(id v) {
             UIColor *color = nil;
             if ([v isKindOfClass:[NSString class]]) {
-                color = [UIColor colorWithString:v];
+                color = [UIColor h_colorWithString:v];
             }
             else if ([v isKindOfClass:[NSNumber class]]) {
-                color = [UIColor colorWithHex:[v intValue]];
+                color = [UIColor h_colorWithHex:[v intValue]];
             }
             else if ([v isKindOfClass:[UIColor class]]) {
                 color = v;

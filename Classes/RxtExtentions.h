@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) RxtSignal *(^rxtNotiObserve)(NSString *notification);
 @property (nonatomic, readonly) RxtSignal *(^rxtNotiObserve2)(NSString *notification, id obj);
 @property (nonatomic, readonly) RxtSignal *rxtDeallocSignal;
+- (void)rxt_removeObserverWithProperty:(NSString *)property;
 @end
 
 @interface UITableViewCell (rxt)

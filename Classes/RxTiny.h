@@ -41,6 +41,8 @@ typedef BOOL (^RxtFilterB)(id v);
 
 #pragma mark - 值观察者，一般不直接使用，请使用宏
 @interface RxtPropertyObserver: RxtSignal
+@property (nonatomic, readonly) id ref;
+@property (nonatomic, readonly) NSString *propertyName;
 + (instancetype)object:(id)ref property:(NSString *)property;
 @end
 

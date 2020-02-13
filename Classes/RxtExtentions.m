@@ -53,7 +53,20 @@ static const void *rxtObserversAddr = &rxtObserversAddr;
         return [RxtNotificationObserver object:self notification:noti object:obj];
     };
 }
-
+- (void)rxt_removeObserverWithProperty:(NSString *)property {
+    NSMutableArray *needDelete = [NSMutableArray new];
+    for (RxtSignal *o in self.rxtObservers) {
+        if ([o isKindOfClass:[RxtPropertyObserver class]]) {
+            RxtPropertyObserver *o2 = (RxtPropertyObserver *)o;
+            if ([o2.propertyName isEqualToString:property]) {
+                [needDelete addObject:o2];
+            }
+        }
+    }
+    for (RxtSignal *o in needDelete) {
+        [self.rxtObservers removeObject:o];
+    }
+}
 - (void)rxt_dealloc {
     RxtSignal *signal = [self _rxtDeallocSignal];
     if (signal) signal.push(nil);
