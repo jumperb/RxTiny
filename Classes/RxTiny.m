@@ -473,7 +473,8 @@ RxtSignal* RxtMerge(NSArray *signals) {
                 [wo dispatch:v];
             });
         }];
-        return [self addNext:o];
+        [self addNext:o];
+        return o;
     };
 }
 - (RxtSignal *(^)(void))asyncAtMain {
@@ -486,7 +487,8 @@ RxtSignal* RxtMerge(NSArray *signals) {
                 [wo dispatch:v];
             });
         }];
-        return [self addNext:o];
+        [self addNext:o];
+        return o;
     };
 }
 - (void (^)(NSString *))log {
