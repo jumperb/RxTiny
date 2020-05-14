@@ -7,7 +7,7 @@
 //
 
 #import "RxTiny.h"
-
+#import <Hodor/HGCDext.h>
 #pragma mark - 信号
 
 @interface RxtSignal ()
@@ -30,6 +30,10 @@
 
 @interface RxtMap: RxtSignal
 @property (nonatomic) RxtMapB mapb;
+@end
+
+@interface RxtProcess: RxtSignal
+@property (nonatomic) RxtProcessB processb;
 @end
 
 @implementation RxtSignal
@@ -163,6 +167,14 @@
 - (void)push:(id)newValue {
     if (!self.mapb) return;
     [super push:self.mapb(newValue)];
+}
+@end
+
+@implementation RxtProcess
+
+- (void)push:(id)newValue {
+    if (!self.processb) return;
+    self.processb(newValue);
 }
 @end
 
@@ -448,6 +460,33 @@ RxtSignal* RxtMerge(NSArray *signals) {
             if (b) b(color);
             return color;
         });
+    };
+}
+
+- (RxtSignal *(^)(void))syncAtMain {
+    return ^RxtSignal* () {
+        RxtProcess *o = [RxtProcess new];
+        __weak RxtProcess *wo = o;
+        [o setProcessb:^(id v) {
+            wo.value = v;
+            syncAtMain(^{
+                [wo dispatch:v];
+            });
+        }];
+        return [self addNext:o];
+    };
+}
+- (RxtSignal *(^)(void))asyncAtMain {
+    return ^RxtSignal* () {
+        RxtProcess *o = [RxtProcess new];
+        __weak RxtProcess *wo = o;
+        [o setProcessb:^(id v) {
+            wo.value = v;
+            asyncAtMain(^{
+                [wo dispatch:v];
+            });
+        }];
+        return [self addNext:o];
     };
 }
 - (void (^)(NSString *))log {

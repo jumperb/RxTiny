@@ -181,6 +181,18 @@
             }
             [[NSNotificationCenter defaultCenter] postNotificationName:@"noti1234" object:nil userInfo:@{@"k":@"v2"}];
         }];
+        
+        [self addMenu:@"转线程" callback:^(id sender, id data) {
+            @strongify(self)
+            self.str = @"1";
+            rxo(self, str).syncAtMain().next(^(id v) {
+                NSLog(@"%@", v);
+            });
+            self.str = @"2";
+            dispatch_async(dispatch_get_global_queue(0, 0), ^{
+                self.str = @"3";
+            });                        
+        }];
     }
     return self;
 }

@@ -12,6 +12,7 @@
 typedef void (^RxtNextB)(id v);
 typedef id (^RxtMapB)(id v);
 typedef BOOL (^RxtFilterB)(id v);
+typedef void (^RxtProcessB)(id v);
 
 #pragma mark - 信号
 @interface RxtSignal: NSObject
@@ -103,6 +104,10 @@ typedef void (^RxtToColorB)(UIColor *color);
 @property (nonatomic, readonly) RxtSignal *(^revertBool)(void);
 @property (nonatomic, readonly) RxtSignal *(^notNull)(void);
 @property (nonatomic, readonly) RxtSignal *(^toColor)(RxtToColorB);
+
+
+@property (nonatomic, readonly) RxtSignal *(^syncAtMain)(void);
+@property (nonatomic, readonly) RxtSignal *(^asyncAtMain)(void);
 
 @property (nonatomic, readonly) void (^log)(NSString *format);
 @end
