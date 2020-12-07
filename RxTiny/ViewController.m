@@ -193,6 +193,16 @@
                 self.str = @"3";
             });                        
         }];
+        
+        [self addMenu:@"变化过滤" callback:^(id sender, id data) {
+            @strongify(self)
+            self.str = @"1";
+            rxo(self, str).onChanged().log(@"%@");
+            self.str = @"1";
+            self.str = @"2";
+            self.str = @"2";
+            self.str = @"1";
+        }];
     }
     return self;
 }

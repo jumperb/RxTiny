@@ -148,7 +148,15 @@
 }
 @end
 
+@interface RxtFilter ()
+@property (nonatomic) id lastValue;
+@end
+
 @implementation RxtFilter
+- (void)push:(id)newValue {
+    self.lastValue = self.value;
+    [super push:newValue];
+}
 - (void)dispatchOne:(RxtSignal *)signal value:(id)value {
     if (!self.filterb) return;
     if (!self.filterb(value)) return;
@@ -435,6 +443,7 @@ RxtSignal* RxtMerge(NSArray *signals) {
         return [self addNext:o];
     };
 }
+
 - (RxtSignal *(^)(void))revertBool {
     return ^RxtSignal* () {
         RxtMap *o = [RxtMap new];
@@ -444,6 +453,18 @@ RxtSignal* RxtMerge(NSArray *signals) {
         return [self addNext:o];
     };
 }
+
+- (RxtSignal *(^)(void))onChanged {
+    return ^RxtSignal* () {
+        RxtFilter *o = [RxtFilter new];
+        __weak RxtFilter *weakO = o;
+        [o setFilterb:^BOOL(id value) {
+            return (value != weakO.lastValue);
+        }];
+        return [self addNext:o];
+    };
+}
+
 - (RxtSignal *(^)(RxtToColorB))toColor {
     return ^RxtSignal* (RxtToColorB b) {
         return self.map(^id(id v) {

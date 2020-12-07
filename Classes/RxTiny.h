@@ -103,6 +103,7 @@ typedef void (^RxtToColorB)(UIColor *color);
 
 @property (nonatomic, readonly) RxtSignal *(^revertBool)(void);
 @property (nonatomic, readonly) RxtSignal *(^notNull)(void);
+@property (nonatomic, readonly) RxtSignal *(^onChanged)(void);
 @property (nonatomic, readonly) RxtSignal *(^toColor)(RxtToColorB);
 
 
