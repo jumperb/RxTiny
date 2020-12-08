@@ -32,6 +32,8 @@ typedef void (^RxtProcessB)(id v);
 @property (nonatomic, readonly) RxtSignal *(^filter)(RxtFilterB);
 //映射信号数据
 @property (nonatomic, readonly) RxtSignal *(^map)(RxtMapB);
+//以初始值初始化
++ (instancetype)fromValue:(id)initValue;
 //直接输出值
 - (id)outputValue;
 //解除绑定，s是指下级信号
@@ -104,6 +106,7 @@ typedef void (^RxtToColorB)(UIColor *color);
 @property (nonatomic, readonly) RxtSignal *(^revertBool)(void);
 @property (nonatomic, readonly) RxtSignal *(^notNull)(void);
 @property (nonatomic, readonly) RxtSignal *(^onChanged)(void);
+@property (nonatomic, readonly) RxtSignal *(^skip)(NSUInteger times);
 @property (nonatomic, readonly) RxtSignal *(^toColor)(RxtToColorB);
 
 

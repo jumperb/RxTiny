@@ -203,6 +203,15 @@
             self.str = @"2";
             self.str = @"1";
         }];
+        
+        [self addMenu:@"跳过" callback:^(id sender, id data) {
+            @strongify(self)
+            self.str = @"1";
+            rxo(self, str).skip(2).log(@"%@");
+            self.str = @"2";
+            self.str = @"3";
+            self.str = @"4";
+        }];
     }
     return self;
 }

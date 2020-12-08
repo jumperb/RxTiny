@@ -13,7 +13,7 @@
 @interface RxtSignal ()
 @property (nonatomic) id value;
 @property (nonatomic) BOOL deaded;
-@property (nonatomic) BOOL lazy; //是否连接上就触发一次
+@property (nonatomic) BOOL lazy; //是否订阅就触发一次
 @property (nonatomic) NSMutableSet<RxtSignal*> *subSignals;
 @end
 
@@ -37,6 +37,12 @@
 @end
 
 @implementation RxtSignal
+
++ (instancetype)fromValue:(id)initValue {
+    RxtSignal *o = [RxtSignal new];
+    o.value = initValue;
+    return o;
+}
 
 - (NSMutableSet<RxtSignal*> *)subSignals {
     if (!_subSignals) _subSignals = [NSMutableSet new];
@@ -319,20 +325,6 @@ RxtSignal* RxtMerge(NSArray *signals) {
 #pragma mark - 补充转换器
 #import <Hodor/UIColor+ext.h>
 
-//
-//@property (nonatomic, readonly) RxtSignal *(^toString)(RxtToStringB);
-//@property (nonatomic, readonly) RxtSignal *(^toBool)(RxtToBoolB);
-//@property (nonatomic, readonly) RxtSignal *(^toFloat)(RxtToFloatB);
-//@property (nonatomic, readonly) RxtSignal *(^toDouble)(RxtToDoubleB);
-//@property (nonatomic, readonly) RxtSignal *(^toChar)(RxtToCharB);
-//@property (nonatomic, readonly) RxtSignal *(^toInteger)(RxtToIntegerB);
-//@property (nonatomic, readonly) RxtSignal *(^toUInteger)(RxtToUIntegerB);
-//@property (nonatomic, readonly) RxtSignal *(^toInt)(RxtToIntB);
-//@property (nonatomic, readonly) RxtSignal *(^toLong)(RxtToLongB);
-//@property (nonatomic, readonly) RxtSignal *(^toLongLong)(RxtToLongLongB);
-//@property (nonatomic, readonly) RxtSignal *(^toUnsignedInt)(RxtToUnsignedIntB);
-//@property (nonatomic, readonly) RxtSignal *(^toUnsignedLong)(RxtToUnsignedLongB);
-//@property (nonatomic, readonly) RxtSignal *(^toUnsignedLongLong)(RxtToUnsignedLongLongB);
 
 @implementation RxtSignal(convert)
 
@@ -460,6 +452,20 @@ RxtSignal* RxtMerge(NSArray *signals) {
         __weak RxtFilter *weakO = o;
         [o setFilterb:^BOOL(id value) {
             return (value != weakO.lastValue);
+        }];
+        return [self addNext:o];
+    };
+}
+- (RxtSignal *(^)(NSUInteger times))skip {
+    return ^RxtSignal* (NSUInteger times) {
+        RxtFilter *o = [RxtFilter new];
+        __block unsigned int skiped = 0;
+        [o setFilterb:^BOOL(id value) {
+            if (skiped >= times) return YES;
+            else {
+                skiped ++;
+                return NO;
+            }
         }];
         return [self addNext:o];
     };
