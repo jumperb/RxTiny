@@ -451,7 +451,7 @@ RxtSignal* RxtMerge(NSArray *signals) {
         RxtFilter *o = [RxtFilter new];
         __weak RxtFilter *weakO = o;
         [o setFilterb:^BOOL(id value) {
-            return (value != weakO.lastValue);
+            return (value != weakO.lastValue && ![value isEqual:weakO.lastValue]);
         }];
         return [self addNext:o];
     };
