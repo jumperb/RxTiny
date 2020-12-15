@@ -69,7 +69,7 @@ RxtSignal* RxtMerge(NSArray *nodes);
 #define rxp(ref, propertyName) [RxtProprtySubscriber object:ref property:((NO&&((void)ref.propertyName, NO))?nil:@#propertyName)]
 #define rxsp(ref, propertyName) [RxtProprtySubscriber object:ref property:((NO&&((void)ref.propertyName, NO))?nil:@#propertyName)].bindSingalDontUse
 #define rxmerge(...) RxtMerge(@[__VA_ARGS__])
-
+#define rxn(ref, notiName) [RxtNotificationObserver object:ref notification:notiName object:nil]
 
 #pragma mark - 补充转换器
 
