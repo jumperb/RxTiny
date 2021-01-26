@@ -32,8 +32,11 @@ typedef void (^RxtProcessB)(id v);
 @property (nonatomic, readonly) RxtSignal *(^filter)(RxtFilterB);
 //映射信号数据
 @property (nonatomic, readonly) RxtSignal *(^map)(RxtMapB);
+//是否订阅就触发一次
+@property (nonatomic) BOOL lazy;
 //以初始值初始化
 + (instancetype)fromValue:(id)initValue;
++ (instancetype)lazy;
 //直接输出值
 - (id)outputValue;
 //解除绑定，s是指下级信号

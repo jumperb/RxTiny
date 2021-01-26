@@ -11,9 +11,9 @@
 #pragma mark - 信号
 
 @interface RxtSignal ()
+@property (nonatomic) BOOL hasValue;
 @property (nonatomic) id value;
 @property (nonatomic) BOOL deaded;
-@property (nonatomic) BOOL lazy; //是否订阅就触发一次
 @property (nonatomic) NSMutableSet<RxtSignal*> *subSignals;
 @end
 
@@ -23,9 +23,6 @@
 
 @interface RxtFilter: RxtSignal
 @property (nonatomic) RxtFilterB filterb;
-@end
-
-@interface RxtNotNull: RxtSignal
 @end
 
 @interface RxtMap: RxtSignal
@@ -41,6 +38,12 @@
 + (instancetype)fromValue:(id)initValue {
     RxtSignal *o = [RxtSignal new];
     o.value = initValue;
+    o.hasValue = YES;
+    return o;
+}
++ (instancetype)lazy {
+    RxtSignal *o = [RxtSignal new];
+    o.lazy = YES;
     return o;
 }
 
@@ -51,6 +54,7 @@
 
 - (void)push:(id)newValue {
     self.value = newValue;
+    self.hasValue = YES;
     [self dispatch:newValue];
 }
 - (id)outputValue {
@@ -68,7 +72,7 @@
 }
 - (RxtSignal *)addNext:(RxtSignal *)signal {
     [self.subSignals addObject:signal];
-    if (!self.lazy && !signal.lazy) {
+    if (!self.lazy && self.hasValue) {
         [self dispatchOne:signal value:[self outputValue]];
     }
     return signal;
@@ -160,22 +164,12 @@
 
 @implementation RxtFilter
 - (void)push:(id)newValue {
-    self.lastValue = self.value;
+    if (self.filterb && !self.filterb(newValue)) return;
     [super push:newValue];
-}
-- (void)dispatchOne:(RxtSignal *)signal value:(id)value {
-    if (!self.filterb) return;
-    if (!self.filterb(value)) return;
-    [super dispatchOne:signal value:value];
+    self.lastValue = newValue;
 }
 @end
 
-@implementation RxtNotNull
-- (void)dispatchOne:(RxtSignal *)signal value:(id)value {
-    if (!value) return;
-    [super dispatchOne:signal value:value];
-}
-@end
 
 @implementation RxtMap
 - (void)push:(id)newValue {
@@ -459,6 +453,7 @@ RxtSignal* RxtMerge(NSArray *signals) {
 - (RxtSignal *(^)(NSUInteger times))skip {
     return ^RxtSignal* (NSUInteger times) {
         RxtFilter *o = [RxtFilter new];
+        o.lazy = YES;
         __block unsigned int skiped = 0;
         [o setFilterb:^BOOL(id value) {
             if (skiped >= times) return YES;

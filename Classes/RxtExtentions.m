@@ -85,7 +85,7 @@ static const void *rxtDeallocSignalAddr = &rxtDeallocSignalAddr;
     [NSObject rxt_setup];
     RxtSignal *o = objc_getAssociatedObject(self, rxtDeallocSignalAddr);
     if (!o) {
-        o = [RxtSignal new];
+        o = [RxtSignal lazy];
         objc_setAssociatedObject(self, rxtDeallocSignalAddr, o, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     return o;
@@ -108,7 +108,7 @@ static const void *rxtOnReuseAddress_tableViewCell = &rxtOnReuseAddress_tableVie
     RxtSignal *signal = objc_getAssociatedObject(self, rxtOnReuseAddress_tableViewCell);
     if (signal != nil) return signal;
     
-    signal = [RxtSignal new];
+    signal = [RxtSignal lazy];
     objc_setAssociatedObject(self, rxtOnReuseAddress_tableViewCell, signal, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
     static dispatch_once_t onceToken;
@@ -132,7 +132,7 @@ static const void *rxtOnReuseAddress_collectCell = &rxtOnReuseAddress_collectCel
     RxtSignal *signal = objc_getAssociatedObject(self, rxtOnReuseAddress_collectCell);
     if (signal != nil) return signal;
     
-    signal = [RxtSignal new];
+    signal = [RxtSignal lazy];
     objc_setAssociatedObject(self, rxtOnReuseAddress_collectCell, signal, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
     static dispatch_once_t onceToken;

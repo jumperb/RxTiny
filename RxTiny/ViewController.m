@@ -89,7 +89,7 @@
         [self addMenu:@"弄死信号" callback:^(id sender, id data) {
             @strongify(self);
             self.str = @"1";
-            RxtSignal *s2 = [RxtSignal new];
+            RxtSignal *s2 = [RxtSignal lazy];
             RxtSignal *s = rxo(self, str);
             s.dieAt(s2).log(@"%@");
             self.str = @"2";
