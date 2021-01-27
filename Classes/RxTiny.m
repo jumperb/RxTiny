@@ -53,6 +53,7 @@
 }
 
 - (void)push:(id)newValue {
+    if (self.deaded) return;
     self.value = newValue;
     self.hasValue = YES;
     [self dispatch:newValue];
@@ -154,6 +155,7 @@
 
 @implementation RxtNext
 - (void)push:(id)newValue {
+    if (self.deaded) return;
     if (self.nextb) self.nextb(newValue);
 }
 @end
@@ -164,6 +166,7 @@
 
 @implementation RxtFilter
 - (void)push:(id)newValue {
+    if (self.deaded) return;
     if (self.filterb && !self.filterb(newValue)) return;
     [super push:newValue];
     self.lastValue = newValue;
@@ -173,6 +176,7 @@
 
 @implementation RxtMap
 - (void)push:(id)newValue {
+    if (self.deaded) return;
     if (!self.mapb) return;
     [super push:self.mapb(newValue)];
 }
@@ -181,6 +185,7 @@
 @implementation RxtProcess
 
 - (void)push:(id)newValue {
+    if (self.deaded) return;
     if (!self.processb) return;
     self.processb(newValue);
 }
@@ -298,6 +303,7 @@
     return res;
 }
 - (void)push:(id)newValue {
+    if (self.deaded) return;
     if (!self.ref || !self.propertyName) return;
     [self.ref setValue:newValue forKey:self.propertyName];    
 }

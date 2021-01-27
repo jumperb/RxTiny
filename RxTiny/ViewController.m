@@ -212,6 +212,19 @@
             self.str = @"3";
             self.str = @"4";
         }];
+        [self addMenu:@"测试" callback:^(id sender, id data) {
+            @strongify(self)
+            __block int changed = 0;
+            RxtSignal *s = [RxtSignal lazy].next(^(id v) {
+                changed += 1;
+            });
+            s.push(nil);
+            s.push(nil);
+            [s dispose];
+            s.push(nil);
+            NSLog(@"%d", changed);
+            
+        }];
     }
     return self;
 }
