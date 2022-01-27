@@ -116,5 +116,5 @@ typedef void (^RxtToColorB)(UIColor *color);
 @property (nonatomic, readonly) RxtSignal *(^syncAtMain)(void);
 @property (nonatomic, readonly) RxtSignal *(^asyncAtMain)(void);
 
-@property (nonatomic, readonly) void (^log)(NSString *format);
+@property (nonatomic, readonly) void (^rlog)(NSString *format);
 @end

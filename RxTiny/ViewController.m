@@ -41,14 +41,14 @@
         [self addMenu:@"自定义信号" callback:^(id sender, id data) {
             RxtSignal *s = [RxtSignal new];
             s.push(@"1");
-            s.log(@"%@");
+            s.rlog(@"%@");
             s.push(@"2");
         }];
         [self addMenu:@"过滤" callback:^(id sender, id data) {
             RxtSignal *s = [RxtSignal new];
             s.filter(^BOOL(id v) {
                 return [v isEqual:@"2"];
-            }).log(@"%@");
+            }).rlog(@"%@");
             
             s.push(@"1");
             s.push(@"2");
@@ -71,7 +71,7 @@
             RxtSignal *s = [RxtSignal new];
             s.push(@"a");
             self.str = @"1";
-            rxmerge(rxo(self, str), s).log(@"%@");
+            rxmerge(rxo(self, str), s).rlog(@"%@");
             self.str = @"2";
             s.push(@"b");
             
@@ -80,7 +80,7 @@
             @strongify(self);
             self.str = @"1";
             RxtSignal *s = rxo(self, str);
-            s.log(@"%@");
+            s.rlog(@"%@");
             self.str = @"2";
             s.die();
             self.str = @"3";
@@ -91,7 +91,7 @@
             self.str = @"1";
             RxtSignal *s2 = [RxtSignal lazy];
             RxtSignal *s = rxo(self, str);
-            s.dieAt(s2).log(@"%@");
+            s.dieAt(s2).rlog(@"%@");
             self.str = @"2";
             s2.push(@"any");
             self.str = @"3";
@@ -101,7 +101,7 @@
             @strongify(self);
             self.str = @"1";
             RxtSignal *s = rxo(self, str);
-            s.log(@"%@");
+            s.rlog(@"%@");
             self.str = @"2";
             if (YES) {
                 NSObject *a = [NSObject new];
@@ -114,7 +114,7 @@
             @strongify(self);
             self.str = @"1";
             RxtSignal *s2 = [RxtSignal new];
-            s2.log(@"%@");
+            s2.rlog(@"%@");
             rxo(self, str).bind(s2);
             self.str = @"2";
         }];
@@ -129,8 +129,8 @@
         
         [self addMenu:@"不为空" callback:^(id sender, id data) {
             @strongify(self);
-            rxo(self, str).log(@"可为空:%@");
-            rxo(self, str).notNull().log(@"不为空:%@");
+            rxo(self, str).rlog(@"可为空:%@");
+            rxo(self, str).notNull().rlog(@"不为空:%@");
             self.str = @"1";
             self.str = nil;
             self.str = @"2";
@@ -161,13 +161,13 @@
         [self addMenu:@"监听结构体" callback:^(id sender, id data) {
             @strongify(self);
             self.point = CGPointMake(10, 10);
-            rxo(self, point).log(@"%@");
+            rxo(self, point).rlog(@"%@");
             self.point = CGPointMake(20, 20);
         }];
         
         [self addMenu:@"观察者自动释放" callback:^(id sender, id data) {
             UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
-            rxo(view, frame).log(@"%@");
+            rxo(view, frame).rlog(@"%@");
             view.frame = CGRectMake(2, 2, 5, 5);
         }];
         
@@ -197,7 +197,7 @@
         [self addMenu:@"变化过滤" callback:^(id sender, id data) {
             @strongify(self)
             self.str = @"1";
-            rxo(self, str).onChanged().log(@"%@");
+            rxo(self, str).onChanged().rlog(@"%@");
             self.str = @"1";
             self.str = @"2";
             self.str = @"2";
@@ -207,7 +207,7 @@
         [self addMenu:@"跳过" callback:^(id sender, id data) {
             @strongify(self)
             self.str = @"1";
-            rxo(self, str).skip(2).log(@"%@");
+            rxo(self, str).skip(2).rlog(@"%@");
             self.str = @"2";
             self.str = @"3";
             self.str = @"4";

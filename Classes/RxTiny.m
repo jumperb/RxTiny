@@ -519,7 +519,7 @@ RxtSignal* RxtMerge(NSArray *signals) {
         return o;
     };
 }
-- (void (^)(NSString *))log {
+- (void (^)(NSString *))rlog {
     return ^void (NSString *format) {
         self.next(^(id v) {
             NSLog(format, v);
