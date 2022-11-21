@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   
   s.author       = { "jumperb" => "zhangchutian_05@163.com" }
 
-  s.source       = { :git => "https://github.com/jumperb/RxTiny.git", :tag => s.version.to_s}
+  s.source       = { :git => "git@github.com:jumperb/RxTiny.git", :tag => s.version.to_s}
 
   s.requires_arc = true
   
