@@ -14,6 +14,7 @@
 @property (nonatomic) BOOL hasValue;
 @property (nonatomic) id value;
 @property (nonatomic) BOOL deaded;
+@property (nonatomic) BOOL willDealloc;
 @property (nonatomic) NSMutableSet<RxtSignal*> *subSignals;
 @end
 
@@ -46,13 +47,17 @@
     o.lazy = YES;
     return o;
 }
-
+- (void)dealloc
+{
+    _willDealloc = YES;
+}
 - (NSMutableSet<RxtSignal*> *)subSignals {
     if (!_subSignals) _subSignals = [NSMutableSet new];
     return _subSignals;
 }
 
 - (void)push:(id)newValue {
+    if (self.willDealloc) return;
     if (self.deaded) return;
     self.value = newValue;
     self.hasValue = YES;
@@ -68,6 +73,7 @@
     }
 }
 - (void)dispatchOne:(RxtSignal *)signal value:(id)value {
+    if (self.willDealloc) return;
     if (self.deaded) return;
     [signal push:value];
 }
@@ -155,6 +161,7 @@
 
 @implementation RxtNext
 - (void)push:(id)newValue {
+    if (self.willDealloc) return;
     if (self.deaded) return;
     if (self.nextb) self.nextb(newValue);
 }
@@ -166,6 +173,7 @@
 
 @implementation RxtFilter
 - (void)push:(id)newValue {
+    if (self.willDealloc) return;
     if (self.deaded) return;
     if (self.filterb && !self.filterb(newValue)) return;
     [super push:newValue];
@@ -176,6 +184,7 @@
 
 @implementation RxtMap
 - (void)push:(id)newValue {
+    if (self.willDealloc) return;
     if (self.deaded) return;
     if (!self.mapb) return;
     [super push:self.mapb(newValue)];
@@ -185,6 +194,7 @@
 @implementation RxtProcess
 
 - (void)push:(id)newValue {
+    if (self.willDealloc) return;
     if (self.deaded) return;
     if (!self.processb) return;
     self.processb(newValue);
@@ -303,6 +313,7 @@
     return res;
 }
 - (void)push:(id)newValue {
+    if (self.willDealloc) return;
     if (self.deaded) return;
     if (!self.ref || !self.propertyName) return;
     [self.ref setValue:newValue forKey:self.propertyName];    
