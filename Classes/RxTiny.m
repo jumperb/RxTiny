@@ -72,6 +72,7 @@
         [self dispatchOne:signal value:v];
     }
 }
+
 - (void)dispatchOne:(RxtSignal *)signal value:(id)value {
     if (self.willDealloc) return;
     if (self.deaded) return;
@@ -168,7 +169,7 @@
 @end
 
 @interface RxtFilter ()
-@property (nonatomic) id lastValue;
+@property (nonatomic, copy) id lastValue;
 @end
 
 @implementation RxtFilter
