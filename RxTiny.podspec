@@ -1,9 +1,9 @@
 Pod::Spec.new do |s|
-  s.name         = "RxTiny"
-  s.version      = "1.2.2"
-  s.summary      = "A short description of RxTiny."
+  s.name = "RxTiny"
+  s.version = "1.2.2"
+  s.summary = "A short description of RxTiny."
 
-  s.description  = <<-DESC
+  s.description = <<-DESC
                    A longer description of RxTiny in Markdown format.
 
                    * Think: Why did you write this? What is the focus? What does it do?
@@ -12,13 +12,13 @@ Pod::Spec.new do |s|
                    * Finally, don't worry about the indent, CocoaPods strips it!
                    DESC
 
-  s.homepage     = "https://github.com/jumperb/RxTiny"
+  s.homepage = "https://github.com/jumperb/RxTiny"
 
-  s.license      = "Copyright"
+  s.license = "Copyright"
   
-  s.author       = { "jumperb" => "zhangchutian_05@163.com" }
+  s.author = { "jumperb" => "zhangchutian_05@163.com" }
 
-  s.source       = { :git => "git@github.com:jumperb/RxTiny.git", :tag => s.version.to_s}
+  s.source = { :git => "git@github.com:jumperb/RxTiny.git", :tag => s.version.to_s}
 
   s.requires_arc = true
   
