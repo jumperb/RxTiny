@@ -184,7 +184,7 @@
 @end
 
 @interface RxtFilter ()
-@property (nonatomic, copy) id lastValue;
+@property (nonatomic) id lastValue;
 @end
 
 @implementation RxtFilter
