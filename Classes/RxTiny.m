@@ -537,10 +537,13 @@ RxtSignal* RxtMerge(NSArray *signals) {
         RxtProcess *o = [RxtProcess new];
         __weak RxtProcess *wo = o;
         [o setProcessb:^(id v) {
-            wo.value = v;
-            asyncAtMain(^{
-                [wo dispatch:v];
-            });
+            __strong RxtProcess *so = wo;
+            if (so) {
+                so.value = v;
+                asyncAtMain(^{
+                    [so dispatch:v];
+                });
+            }
         }];
         [self addNext:o];
         return o;
