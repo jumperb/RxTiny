@@ -16,7 +16,6 @@
 @property (nonatomic) BOOL deaded;
 @property (nonatomic) BOOL willDealloc;
 @property (nonatomic) NSMutableSet<RxtSignal*> *subSignals;
-@property (nonatomic) NSLock *subSignalsLocker;
 @end
 
 @interface RxtNext: RxtSignal
@@ -48,14 +47,7 @@
     o.lazy = YES;
     return o;
 }
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        _subSignalsLocker = [NSLock new];
-    }
-    return self;
-}
+
 - (void)dealloc
 {
     _willDealloc = YES;
@@ -79,29 +71,23 @@
     if (self.willDealloc) return;
     if (self.deaded) return;
     id v = [self outputValue];
-    [self.subSignalsLocker lock];
     for (RxtSignal *signal in self.subSignals) {
         [self dispatchOne:signal value:v];
     }
-    [self.subSignalsLocker unlock];
 }
 
 - (void)dispatchOne:(RxtSignal *)signal value:(id)value {
     [signal push:value];
 }
 - (RxtSignal *)addNext:(RxtSignal *)signal {
-    [self.subSignalsLocker lock];
     [self.subSignals addObject:signal];
-    [self.subSignalsLocker unlock];
     if (!self.lazy && self.hasValue) {
         [self dispatchOne:signal value:[self outputValue]];
     }
     return signal;
 }
 - (void)unBind:(RxtSignal *)signal {
-    [self.subSignalsLocker lock];
     [self.subSignals removeObject:signal];
-    [self.subSignalsLocker unlock];
 }
 - (void (^)(id))push {
     return ^void (id newValue) {
