@@ -106,7 +106,10 @@
         o.lazy = YES;
         __weak typeof(self) weakSelf = self;
         [o setNextb:^(id v) {
-            [weakSelf dispose];
+            __strong RxtSignal *so = weakSelf;
+            if (so) {
+                [so dispose];
+            }
         }];
         [n addNext:o];
         return self;
@@ -118,7 +121,10 @@
         o.lazy = YES;
         __weak typeof(self) weakSelf = self;
         [o setNextb:^(id v) {
-            [weakSelf dispose];
+            __strong RxtSignal *so = weakSelf;
+            if (so) {
+                [so dispose];
+            }
         }];
         [obj.rxtDeallocSignal addNext:o];
         return self;
@@ -464,7 +470,9 @@ RxtSignal* RxtMerge(NSArray *signals) {
         RxtFilter *o = [RxtFilter new];
         __weak RxtFilter *weakO = o;
         [o setFilterb:^BOOL(id value) {
-            return (value != weakO.lastValue && ![value isEqual:weakO.lastValue]);
+            __strong RxtFilter *so = weakO;
+            if (!so) return NO;
+            return (value != so.lastValue && ![value isEqual:so.lastValue]);
         }];
         return [self addNext:o];
     };
@@ -509,9 +517,13 @@ RxtSignal* RxtMerge(NSArray *signals) {
         RxtProcess *o = [RxtProcess new];
         __weak RxtProcess *wo = o;
         [o setProcessb:^(id v) {
-            wo.value = v;
+            __strong RxtProcess *so = wo;
+            if (!so) return;
+            so.value = v;
             syncAtMain(^{
-                [wo dispatch:v];
+                __strong RxtProcess *so = wo;
+                if (!so) return;
+                [so dispatch:v];
             });
         }];
         [self addNext:o];
