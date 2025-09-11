@@ -76,6 +76,8 @@
     return self.value;
 }
 - (void)dispatch:(id)value {
+    if (self.willDealloc) return;
+    if (self.deaded) return;
     id v = [self outputValue];
     [self.subSignalsLocker lock];
     for (RxtSignal *signal in self.subSignals) {
@@ -85,8 +87,6 @@
 }
 
 - (void)dispatchOne:(RxtSignal *)signal value:(id)value {
-    if (self.willDealloc) return;
-    if (self.deaded) return;
     [signal push:value];
 }
 - (RxtSignal *)addNext:(RxtSignal *)signal {
