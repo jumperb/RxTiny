@@ -70,9 +70,8 @@
 - (void)dispatch:(id)value {
     if (self.willDealloc) return;
     if (self.deaded) return;
-    id v = [self outputValue];
     for (RxtSignal *signal in self.subSignals) {
-        [self dispatchOne:signal value:v];
+        [self dispatchOne:signal value:value];
     }
 }
 
@@ -82,7 +81,7 @@
 - (RxtSignal *)addNext:(RxtSignal *)signal {
     [self.subSignals addObject:signal];
     if (!self.lazy && self.hasValue) {
-        [self dispatchOne:signal value:[self outputValue]];
+        [self dispatchOne:signal value:self.value];
     }
     return signal;
 }
@@ -324,7 +323,7 @@
     if (self.willDealloc) return;
     if (self.deaded) return;
     if (!self.ref || !self.propertyName) return;
-    [self.ref setValue:newValue forKey:self.propertyName];    
+    [self.ref setValue:newValue forKey:self.propertyName];
 }
 - (void)setBindSingalDontUse:(RxtSignal *)bindSingalDontUse
 {
@@ -517,12 +516,10 @@ RxtSignal* RxtMerge(NSArray *signals) {
         RxtProcess *o = [RxtProcess new];
         __weak RxtProcess *wo = o;
         [o setProcessb:^(id v) {
-            __strong RxtProcess *so = wo;
-            if (!so) return;
-            so.value = v;
             syncAtMain(^{
                 __strong RxtProcess *so = wo;
                 if (!so) return;
+                so.value = v;
                 [so dispatch:v];
             });
         }];
@@ -535,13 +532,13 @@ RxtSignal* RxtMerge(NSArray *signals) {
         RxtProcess *o = [RxtProcess new];
         __weak RxtProcess *wo = o;
         [o setProcessb:^(id v) {
-            __strong RxtProcess *so = wo;
-            if (so) {
+            asyncAtMain(^{
+                __strong RxtProcess *so = wo;
+                if (!so) return;
                 so.value = v;
-                asyncAtMain(^{
-                    [so dispatch:v];
-                });
-            }
+                [so dispatch:v];
+            });
+            
         }];
         [self addNext:o];
         return o;
