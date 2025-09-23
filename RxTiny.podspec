@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = "RxTiny"
-  s.version = "1.2.9"
+  s.version = "1.3.0"
   s.summary = "A short description of RxTiny."
 
   s.description = <<-DESC
