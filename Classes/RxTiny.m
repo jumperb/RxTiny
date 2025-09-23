@@ -175,7 +175,7 @@
 @end
 
 @interface RxtFilter ()
-@property (nonatomic) id lastValue;
+@property (atomic) id lastValue;
 @end
 
 @implementation RxtFilter
