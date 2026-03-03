@@ -544,6 +544,23 @@ RxtSignal* RxtMerge(NSArray *signals) {
         return o;
     };
 }
+- (RxtSignal *(^)(void))asyncAtMainIfNeed {
+    return ^RxtSignal* () {
+        RxtProcess *o = [RxtProcess new];
+        __weak RxtProcess *wo = o;
+        [o setProcessb:^(id v) {
+            asyncAtMainIfNeed(^{
+                __strong RxtProcess *so = wo;
+                if (!so) return;
+                so.value = v;
+                [so dispatch:v];
+            });
+            
+        }];
+        [self addNext:o];
+        return o;
+    };
+}
 - (void (^)(NSString *))rlog {
     return ^void (NSString *format) {
         self.next(^(id v) {
