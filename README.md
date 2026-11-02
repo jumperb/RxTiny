@@ -132,3 +132,42 @@
     NSLog(@"见-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath");
 }];
 ```
+
+## 暂停 / 采样（本地新增）
+
+### pausable: 闸门控制派发
+
+gate 输出 BOOL：`YES` 放行 / `NO` 暂停。**暂停期间上游的值仍然会被记下来（末值），只是不派发**；`NO → YES` 时把末值补发一次。
+
+```objc
+RxtSignal *gate = [RxtSignal new];
+
+rxo(player, currentTime)
+    .pausable(gate)              // 闸门关着就只记末值，不刷新
+    .asyncAtMain()
+    .dieWith(self)
+    .next(^(id v) {
+        // 刷新 UI
+    });
+
+gate.push(@NO);   // 暂停：期间上游疯狂 push 也不会进 next，只留最后一个值
+gate.push(@YES);  // 恢复：立刻补发暂停期间的末值（只补一次）
+```
+
+适用场景：页面/列表不可见、拖拽中、动画中——想冻住刷新，但回到前台要立刻是最新值，而不是等下一次数据变化。
+
+### sample: 按采样信号吐末值
+
+自身从不主动派发，只在 sampler 发信号时，把自己的末值吐一次。
+
+```objc
+rxo(player, currentTime)
+    .sample(timerSignal)         // timerSignal 每 1s 一次
+    .next(^(id v) { /* 1s 刷一次，永远是最新值 */ });
+```
+
+### 备注
+
+- `RxtPause` 是两者的载体（`paused` + `emit`），一般不直接用。
+- `paused` 是非原子的，闸门信号请在与上游同一个线程（一般是主线程）上 push。
+- `pausable(nil)` / `sample(nil)` 不崩：前者退化为透传，后者永不派发。

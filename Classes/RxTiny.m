@@ -16,6 +16,9 @@
 @property (nonatomic) BOOL deaded;
 @property (nonatomic) BOOL willDealloc;
 @property (nonatomic) NSMutableSet<RxtSignal*> *subSignals;
+// 已有实现，这里显式声明，供子类 RxtPause 使用
+- (void)push:(id)newValue;
+- (void)dispatch:(id)value;
 @end
 
 @interface RxtNext: RxtSignal
@@ -568,4 +571,70 @@ RxtSignal* RxtMerge(NSArray *signals) {
         });
     };
 }
+@end
+
+#pragma mark - 暂停闸门
+
+@implementation RxtPause
+
+- (void)push:(id)newValue {
+    if (self.willDealloc) return;
+    if (self.deaded) return;
+    self.value = newValue;
+    self.hasValue = YES;                            // 暂停期间也始终记末值
+    if (!self.paused) [self dispatch:newValue];     // 只有这一行受 paused 控制
+}
+
+- (void)emit {
+    if (self.willDealloc) return;
+    if (self.deaded) return;
+    if (!self.hasValue) return;
+    [self dispatch:self.value];
+}
+
+@end
+
+#pragma mark - 暂停 / 采样
+
+@implementation RxtSignal (pause)
+
+- (RxtSignal *(^)(RxtSignal *))pausable {
+    return ^RxtSignal* (RxtSignal *gate) {
+        RxtPause *o = [RxtPause new];
+        o.lazy = YES;
+        __weak RxtPause *wo = o;
+        // 先接闸门、再接上游：保证上游末值到达时 paused 已是闸门的真实状态
+        if (gate) {
+            gate.next(^(id v) {
+                __strong RxtPause *so = wo;
+                if (!so) return;
+                BOOL wasPaused = so.paused;
+                so.paused = ![v boolValue];
+                // NO -> YES：把暂停期间攒下的末值补发一次
+                if (wasPaused && !so.paused && so.hasValue) [so emit];
+            });
+        }
+        [self addNext:o];
+        return o;
+    };
+}
+
+- (RxtSignal *(^)(RxtSignal *))sample {
+    return ^RxtSignal* (RxtSignal *sampler) {
+        RxtPause *o = [RxtPause new];
+        o.lazy = YES;
+        o.paused = YES;   // 常态保持，只在 sampler 发信号时吐自己的末值
+        __weak RxtPause *wo = o;
+        if (sampler) {
+            sampler.next(^(id v) {
+                __strong RxtPause *so = wo;
+                if (!so) return;
+                [so emit];
+            });
+        }
+        [self addNext:o];
+        return o;
+    };
+}
+
 @end
