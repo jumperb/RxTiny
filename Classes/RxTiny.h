@@ -45,6 +45,23 @@ typedef void (^RxtProcessB)(id v);
 - (void)dispose;
 @end
 
+#pragma mark - 暂停闸门（一般不直接创建，用 pausable / sample 操作符）
+
+/**
+ 带暂停开关的信号：
+ - paused == NO：正常向下游派发
+ - paused == YES：只记录末值（value / hasValue），不向下游派发；恢复时由 pausable 补发末值
+ */
+@interface RxtPause: RxtSignal
+
+// NO = 放行（默认），YES = 暂停
+@property (nonatomic, assign) BOOL paused;
+
+// 无视 paused，立即把当前末值派发一次（无末值则什么都不做）
+- (void)emit;
+
+@end
+
 #pragma mark - 值观察者，一般不直接使用，请使用宏
 @interface RxtPropertyObserver: RxtSignal
 @property (nonatomic, readonly) id ref;
@@ -118,4 +135,16 @@ typedef void (^RxtToColorB)(UIColor *color);
 @property (nonatomic, readonly) RxtSignal *(^asyncAtMainIfNeed)(void);
 
 @property (nonatomic, readonly) void (^rlog)(NSString *format);
+@end
+
+#pragma mark - 暂停 / 采样
+
+@interface RxtSignal (pause)
+
+// gate 输出 BOOL：YES 放行 / NO 暂停；暂停期间只记末值，NO→YES 时补发末值一次
+@property (nonatomic, readonly) RxtSignal *(^pausable)(RxtSignal *gate);
+
+// 只在 sampler 发信号时输出自己的末值（自身不主动派发）
+@property (nonatomic, readonly) RxtSignal *(^sample)(RxtSignal *sampler);
+
 @end
